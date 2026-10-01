@@ -1,0 +1,8 @@
+Build-only references from the existing TC API 13 development installation:
+Dalamud assembly: 13.0.0.6
+Dalamud commit: abf0adbd01926f15e01094efdd72766e91167270
+Target runtime: .NET 9
+Upstream also vendored Dalamud references. This fork replaces the API 15 /
+.NET 10 assemblies with API 13 / .NET 9 references.
+Host assemblies must never be included in the plugin installation zip.
+Set DALAMUD_HOME to compile against another compatible API 13 installation.

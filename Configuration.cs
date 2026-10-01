@@ -18,7 +18,7 @@ public class Configuration : IPluginConfiguration
     public bool EnablePocketBackendTelemetry { get; set; } = true;
 
     /// <summary>界面语言选择。Auto 表示跟随 Dalamud 客户端语言。</summary>
-    public AppLanguage Language { get; set; } = AppLanguage.Auto;
+    public AppLanguage Language { get; set; } = AppLanguage.ChineseTraditional;
 
     /// <summary>录制文件输出目录，空则使用插件配置目录下的 Recordings 子目录。</summary>
     public string OutputDirectory { get; set; } = string.Empty;

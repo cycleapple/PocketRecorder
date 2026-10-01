@@ -1,4 +1,5 @@
 {
+  "Cmd.HelpSummary": "Pocket Recorder：/pktr start 开始、end 停止、list 录像列表、config 设置、help 帮助。",
   "General.On": "开启",
   "General.Off": "关闭",
   "General.Show": "显示",

@@ -1,7 +1,6 @@
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Windowing;
-using OmenTools;
 using Recorder.Localization;
 using Recorder.Recording;
 using System.IO;
@@ -235,9 +234,9 @@ internal sealed class FloatingRecordWindow : Window
         try
         {
             string imageDirectory = Path.Combine(Path.GetDirectoryName(typeof(Plugin).Assembly.Location) ?? string.Empty, "images");
-            _starNormalTexture = DService.Instance().Texture.GetFromFile(Path.Combine(imageDirectory, "star-normal.png"));
-            _starHoverTexture = DService.Instance().Texture.GetFromFile(Path.Combine(imageDirectory, "star-hover.png"));
-            _starActiveTexture = DService.Instance().Texture.GetFromFile(Path.Combine(imageDirectory, "star-active.png"));
+            _starNormalTexture = Plugin.TextureProvider.GetFromFile(Path.Combine(imageDirectory, "star-normal.png"));
+            _starHoverTexture = Plugin.TextureProvider.GetFromFile(Path.Combine(imageDirectory, "star-hover.png"));
+            _starActiveTexture = Plugin.TextureProvider.GetFromFile(Path.Combine(imageDirectory, "star-active.png"));
         }
         catch (System.Exception ex)
         {

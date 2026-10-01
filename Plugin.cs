@@ -2,7 +2,6 @@ using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using OmenTools;
 using Recorder.Capture;
 using Recorder.Encoding;
 using Recorder.Localization;
@@ -27,6 +26,9 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IFramework Framework { get; private set; } = null!;
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
     [PluginService] internal static IDutyState DutyState { get; private set; } = null!;
+    [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
+    [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
+    [PluginService] internal static IToastGui ToastGui { get; private set; } = null!;
 
     internal Configuration Config { get; }
     internal IRecorderEnvironment Environment { get; }
@@ -45,7 +47,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
-        DService.Init(pluginInterface);
         NativeRecorderRuntimeManager.ConfigureFromPluginInterface(pluginInterface);
         Environment = new DalamudRecorderEnvironment(pluginInterface, Log);
                 Config = Configuration.Load(pluginInterface);
@@ -139,7 +140,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         CommandManager.AddHandler(commandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Pocket Recorder: start, end, toggle, status, list, autorecord on/off/toggle, floating on/off/toggle, fps, bitrate, audio, mic, overlay, output, config, help。",
+            HelpMessage = Loc.T("Cmd.HelpSummary"),
         });
     }
 
@@ -521,6 +522,5 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.RemoveWindow(FloatingRecordWindow);
         WindowSystem.RemoveWindow(ConfigWindow);
         WindowSystem.RemoveWindow(RecordingListWindow);
-        DService.Uninit();
     }
 }

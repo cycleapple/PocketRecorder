@@ -1,8 +1,7 @@
-using Dalamud.Game.DutyState;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using OmenTools.OmenService;
+using Lumina.Excel.Sheets;
 using Recorder.Localization;
 using System;
 using System.IO;
@@ -105,13 +104,13 @@ internal sealed class AutoDutyRecordingService : IDisposable
         }
     }
 
-    private void OnDutyWiped(IDutyStateEventArgs args)
+    private void OnDutyWiped(object? sender, ushort territoryType)
     {
         Plugin.Log.Info("[AutoDuty] Duty wipe detected.");
         StopAutoRecording("wipe");
     }
 
-    private void OnTerritoryChanged(uint territoryType)
+    private void OnTerritoryChanged(ushort territoryType)
     {
         _wasCountdownActive = false;
         StopAutoRecording("territory changed");
@@ -197,12 +196,12 @@ internal sealed class AutoDutyRecordingService : IDisposable
             if (agentModule == null)
                 return default;
 
-            var countdownAgent = agentModule->GetAgentByInternalId(AgentId.CountDownSettingDialog);
+            var countdownAgent = (AgentCountDownSettingDialog*)agentModule->GetAgentByInternalId(AgentId.CountDownSettingDialog);
             if (countdownAgent == null)
                 return default;
 
-            float timer = *(float*)((byte*)countdownAgent + 0x28);
-            bool isActive = *(bool*)((byte*)countdownAgent + 0x38);
+            float timer = countdownAgent->TimeRemaining;
+            bool isActive = countdownAgent->Active;
             return isActive && timer > 0f
                 ? new CountdownState(true, timer)
                 : default;
@@ -215,9 +214,10 @@ internal sealed class AutoDutyRecordingService : IDisposable
 
     private static string GetDutyName()
     {
-        string name = GameState.ContentFinderConditionData.Name.ToString();
+        var territory = Plugin.DataManager.GetExcelSheet<TerritoryType>().GetRowOrDefault(Plugin.ClientState.TerritoryType);
+        string name = territory?.ContentFinderCondition.ValueNullable?.Name.ToString() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(name))
-            name = GameState.TerritoryTypeData.PlaceName.ValueNullable?.Name.ToString() ?? "Duty";
+            name = territory?.PlaceName.ValueNullable?.Name.ToString() ?? "Duty";
 
         return SanitizeFileName(name);
     }

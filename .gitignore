@@ -1,5 +1,6 @@
 ## Build output
 bin/
+artifacts/
 obj/
 NativeRecorder/build/
 !lib/native/

@@ -1,0 +1,14 @@
+Pocket Recorder 1.0.5.21 — Dalamud API 13 / .NET 9 / 繁體中文測試版
+
+預設使用繁體中文，保留英文、日文與簡體中文切換。
+將副本事件改為 API 13 簽章，倒數計時改用 API 13 結構欄位。
+移除 OmenTools 依賴，使用 Dalamud 原生材質、資料表與通知服務。
+包含 NVIDIA / AMD / Intel 原生錄影元件及 FFmpeg 備援支援。
+
+安裝：在 Dalamud 自訂插件庫新增本 Release 的 pluginmaster.json 下載網址。
+也可解壓 latest.zip，透過開發插件載入 PocketRecorder.dll；請保留整個資料夾。
+指令：/pktr 開啟設定、/pktr start 開始、/pktr end 停止、/pktr list 開啟錄影清單。
+既有設定若未顯示繁中，請在語言選單選擇「繁體中文」。
+
+已驗證編譯與翻譯資源完整性，尚未完成遊戲內錄影、音訊、GPU 編碼與自動倒數實測。
+沿用上游首次啟動下載 FFmpeg 與預設啟用匿名診斷回報行為；可於「隱私與診斷」關閉回報。

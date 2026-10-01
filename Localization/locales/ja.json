@@ -1,4 +1,5 @@
 {
+  "Cmd.HelpSummary": "Pocket Recorder: /pktr start, end, toggle, status, list, config, help。",
   "General.On": "オン",
   "General.Off": "オフ",
   "General.Show": "表示中",

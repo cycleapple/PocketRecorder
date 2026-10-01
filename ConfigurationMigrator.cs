@@ -172,7 +172,7 @@ internal static class ConfigurationMigrator
 
         if (config.Version < 22)
         {
-            // Language defaults to Auto; no explicit assignment needed.
+            // Missing language settings use this fork's Traditional Chinese default.
             SaveVersion(config, pi, 22);
         }
 

@@ -1,83 +1,26 @@
-name: PR Build Check
-
+name: Build API 13 zh-TW
 on:
   push:
-    branches: ['*']
+    branches: [api13-zh-tw]
   pull_request:
-    branches: [master, main]
-
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   build:
     runs-on: windows-2022
-    defaults:
-      run:
-        shell: pwsh
-
-    env:
-      DALAMUD_HOME: ${{ github.workspace }}\lib
-      USE_MINIMAL_FFMPEG: true
-      FFMPEG_REF: n8.1.2
-      VIDEO_CODEC_SDK_12_URL: ${{ secrets.VIDEO_CODEC_SDK_12_URL || vars.VIDEO_CODEC_SDK_12_URL }}
-
     steps:
-      - name: Checkout with submodules
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
         with:
-          submodules: recursive
-
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+          dotnet-version: 9.0.x
+      - uses: microsoft/setup-msbuild@v2
+      - run: python scripts/Verify-Locales.py
+      - run: dotnet build PocketRecorder.csproj -c Release -p:Platform=x64
+      - shell: pwsh
+        run: ./scripts/Package-Api13.ps1
+      - uses: actions/upload-artifact@v4
         with:
-          dotnet-version: 10.0.x
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Prepare NativeRecorder dependencies
-        run: .\scripts\Prepare-NativeRecorderDeps.ps1
-
-      - name: Build NativeRecorder
-        run: |
-          msbuild NativeRecorder\NativeRecorder.vcxproj `
-            /p:Configuration=Release `
-            /p:Platform=x64 `
-            /p:VideoCodecSdkDir="$env:NATIVE_RECORDER_VIDEO_CODEC_SDK_DIR" `
-            /p:FfmpegRoot="$env:NATIVE_RECORDER_FFMPEG_ROOT" `
-            /p:AmfSdkDir="$env:NATIVE_RECORDER_AMF_DIR" `
-            /v:minimal
-
-      - name: Build Plugin
-        run: |
-          dotnet build --configuration Release `
-            /p:Platform=x64 `
-            /p:DALAMUD_HOME="${{ github.workspace }}\lib" `
-            /p:NativeRecorderFfmpegRoot="$env:NATIVE_RECORDER_FFMPEG_ROOT" `
-            /p:NativeRecorderAutoBuild=false
-
-      - name: Verify packaged native files
-        run: |
-          $outputDir = "bin\x64\Release"
-          $requiredFiles = @(
-            "NativeRecorder.abi13.dll",
-            "avformat-*.dll",
-            "avcodec-*.dll",
-            "avutil-*.dll",
-            "swresample-*.dll"
-          )
-          foreach ($pattern in $requiredFiles) {
-            $matches = @(Get-ChildItem $outputDir -Filter $pattern -File)
-            if ($matches.Count -eq 0) {
-              throw "Required native package file missing: $outputDir\$pattern"
-            }
-          }
-          $legacyNativeDlls = @(Get-ChildItem $outputDir -Filter "NativeRecorder.abi13.nvenc*.dll" -File)
-          if ($legacyNativeDlls.Count -ne 0) {
-            throw "Legacy split NativeRecorder DLLs must not be packaged: $($legacyNativeDlls.Name -join ', ')"
-          }
-
-      - name: Store Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Plugin-PocketRecorder
-          path: bin\x64\Release\*
-          retention-days: 1
+          name: PocketRecorder-API13-zh-TW
+          path: artifacts/*
+          retention-days: 30

@@ -1,5 +1,4 @@
 using Dalamud.Plugin.Services;
-using OmenTools.OmenService;
 using Recorder.Capture;
 using Recorder.Diagnostics;
 using Recorder.Encoding;
@@ -924,9 +923,8 @@ internal sealed class RecordingService : IDisposable
         {
             try
             {
-                NotifyHelper.ToastError(Loc.T("NvencDriver.ToastMessage"));
-                NotifyHelper.Instance().ChatError(Loc.T("NvencDriver.ChatMessage"));
-                ChatManager.Instance().SendMessage($"/e {Loc.T("NvencDriver.ChatMessage")}<se.1>");
+                Plugin.ToastGui.ShowError(Loc.T("NvencDriver.ToastMessage"));
+                Plugin.ChatGui.PrintError(Loc.T("NvencDriver.ChatMessage"));
             }
             catch (Exception notifyEx)
             {

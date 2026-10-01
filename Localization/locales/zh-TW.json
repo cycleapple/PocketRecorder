@@ -1,4 +1,5 @@
 {
+  "Cmd.HelpSummary": "Pocket Recorder：/pktr start 開始、end 停止、list 錄影清單、config 設定、help 說明。",
   "General.On": "開啟",
   "General.Off": "關閉",
   "General.Show": "顯示",
@@ -13,7 +14,7 @@
   "Config.SettingsAutoSave": "設定會自動儲存",
   "Config.GeneralSettings": "一般",
   "Config.Language": "語言",
-  "Config.LanguageAuto": "自動（跟隨遊戲）",
+  "Config.LanguageAuto": "自動（跟隨 Dalamud）",
   "Config.LanguageEnglish": "English",
   "Config.LanguageJapanese": "日本語",
   "Config.LanguageChineseSimplified": "简体中文",

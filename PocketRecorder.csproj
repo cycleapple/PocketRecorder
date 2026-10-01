@@ -2,7 +2,7 @@
   <Import Project="lib\native\NativeRecorderDeps.props" Condition="Exists('lib\native\NativeRecorderDeps.props')" />
 
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -11,15 +11,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-<Version>1.0.5.16</Version>
-<AssemblyVersion>1.0.5.16</AssemblyVersion>
-<FileVersion>1.0.5.16</FileVersion>
+    <Version>1.0.5.21</Version>
+    <AssemblyVersion>1.0.5.21</AssemblyVersion>
+    <FileVersion>1.0.5.21</FileVersion>
     <AssemblyName>PocketRecorder</AssemblyName>
     <RootNamespace>Recorder</RootNamespace>
-    <DalamudLibPath>$(APPDATA)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-    <DalamudLibPath Condition="Exists('$(APPDATA)\XIVLauncherCN\addon\Hooks\dev\')">$(APPDATA)\XIVLauncherCN\addon\Hooks\dev\</DalamudLibPath>
+    <DalamudLibPath>$(MSBuildProjectDirectory)\lib\</DalamudLibPath>
     <DalamudLibPath Condition="'$(DALAMUD_HOME)' != ''">$(DALAMUD_HOME)\</DalamudLibPath>
-    <NativeRecorderFfmpegRoot Condition="'$(NativeRecorderFfmpegRoot)' == ''">lib\native\ffmpeg-btbn-lgpl-shared\ffmpeg-master-latest-win64-lgpl-shared</NativeRecorderFfmpegRoot>
+    <NativeRecorderFfmpegRoot Condition="'$(NativeRecorderFfmpegRoot)' == ''">$(MSBuildProjectDirectory)\lib\native\ffmpeg-minimal-lgpl-shared\ffmpeg-minimal-win64-lgpl-shared</NativeRecorderFfmpegRoot>
+    <FfmpegRoot Condition="'$(FfmpegRoot)' == ''">$(NativeRecorderFfmpegRoot)</FfmpegRoot>
     <OneVplSdkDir Condition="'$(OneVplSdkDir)' == ''">$(MSBuildProjectDirectory)\lib\native\oneVPL\devel</OneVplSdkDir>
     <OneVplRuntimeDir Condition="'$(OneVplRuntimeDir)' == ''">$(MSBuildProjectDirectory)\lib\native\oneVPL\runtime\runtimes\win-x64\native</OneVplRuntimeDir>
     <NativeRecorderAutoBuild Condition="'$(NativeRecorderAutoBuild)' == '' and '$(OS)' == 'Windows_NT'">true</NativeRecorderAutoBuild>
@@ -31,9 +31,6 @@
     <NativeRecorderVideoCodecSdkDir Condition="'$(NativeRecorderVideoCodecSdkDir)' == '' and Exists('$(MSBuildProjectDirectory)\lib\native\VideoCodecSDK\Video_Codec_SDK_12.0.16')">$(MSBuildProjectDirectory)\lib\native\VideoCodecSDK\Video_Codec_SDK_12.0.16</NativeRecorderVideoCodecSdkDir>
     <NativeRecorderVideoCodecSdkDir Condition="'$(NativeRecorderVideoCodecSdkDir)' == ''">$(VideoCodecSdkDir)</NativeRecorderVideoCodecSdkDir>
     <NativeRecorderOutputDll>$(MSBuildProjectDirectory)\NativeRecorder\bin\$(NativeRecorderBuildPlatform)\$(NativeRecorderBuildConfiguration)\NativeRecorder.dll</NativeRecorderOutputDll>
-    <RestoreAdditionalProjectSources>
-      https://纯本地引用;
-    </RestoreAdditionalProjectSources>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
@@ -65,17 +62,11 @@
     <Content Include="$(NativeRecorderFfmpegRoot)\COPYING*" Condition="Exists('$(NativeRecorderFfmpegRoot)')" Link="licenses\FFmpeg\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(NativeRecorderFfmpegRoot)\BUILDINFO.txt" Condition="Exists('$(NativeRecorderFfmpegRoot)\BUILDINFO.txt')" Link="licenses\FFmpeg\BUILDINFO.txt" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(OneVplRuntimeDir)\..\..\..\vpl\license.txt" Condition="Exists('$(OneVplRuntimeDir)\..\..\..\vpl\license.txt')" Link="licenses\oneVPL\license.txt" CopyToOutputDirectory="PreserveNewest" />
-    <Compile Remove="OmenTools\**\*.cs" />
-    <EmbeddedResource Remove="OmenTools\**\*" />
-    <None Remove="OmenTools\**\*" />
+    <None Remove="lib\*.dll" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="OmenTools\OmenTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

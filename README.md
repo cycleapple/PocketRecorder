@@ -1,4 +1,20 @@
-<h1 align="center">Pocket Recorder</h1>
+<h1 align="center">Pocket Recorder — API 13 繁體中文版</h1>
+
+此 Fork 的 `api13-zh-tw` 分支提供 .NET 9 / Dalamud API 13 版本，預設介面為繁體中文。
+原始碼基於上游提交 `9aeb806a9fed579a758c0736760753c1cb0f2d0e`。
+下載與安裝方式請見[本 Fork 的 Releases](https://github.com/cycleapple/PocketRecorder/releases)。
+這是尚待遊戲內實測的移植測試版。
+
+建置需求：.NET 9 SDK、Visual Studio 2022 C++ v143 與 Windows SDK。
+執行 `dotnet build PocketRecorder.csproj -c Release -p:Platform=x64`，再以 PowerShell 7
+執行 `./scripts/Package-Api13.ps1`。專案內含固定 API 13 編譯參考與原生相依套件。
+只編譯 C# 時可加上 `-p:NativeRecorderAutoBuild=false`，完整安裝包仍須原生 DLL。
+翻譯檢查：`python scripts/Verify-Locales.py`。
+
+`NativeRecorder.abi13.dll` 中的 ABI 13 是原生錄影介面的版本，與 Dalamud API 13 是兩回事。
+首次使用會下載 FFmpeg；沿用上游預設啟用診斷回報，可於「隱私與診斷」關閉。
+以下為上游說明；安裝此 Fork 請使用上述 Releases。
+
 <p align="center">
 <img src="images/icon.png" width="96" alt="Pocket Recorder icon">
 </p>

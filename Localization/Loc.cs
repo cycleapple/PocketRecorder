@@ -70,7 +70,7 @@ internal static class Loc
         {
             "ja" => AppLanguage.Japanese,
             "zh" or "zh-cn" => AppLanguage.ChineseSimplified,
-            "zh-tw" => AppLanguage.ChineseTraditional,
+            "zh-tw" or "zh-hant" or "zh-hk" => AppLanguage.ChineseTraditional,
             _ => AppLanguage.English,
         };
     }
