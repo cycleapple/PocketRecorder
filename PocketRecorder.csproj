@@ -11,9 +11,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>1.0.5.21</Version>
-    <AssemblyVersion>1.0.5.21</AssemblyVersion>
-    <FileVersion>1.0.5.21</FileVersion>
+    <Version>1.0.5.22</Version>
+    <AssemblyVersion>1.0.5.22</AssemblyVersion>
+    <FileVersion>1.0.5.22</FileVersion>
     <AssemblyName>PocketRecorder</AssemblyName>
     <RootNamespace>Recorder</RootNamespace>
     <DalamudLibPath>$(MSBuildProjectDirectory)\lib\</DalamudLibPath>
