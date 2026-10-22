@@ -28,6 +28,9 @@ foreach ($pattern in $required) {
 foreach ($pattern in @('Dalamud*.dll', 'FFXIVClientStructs.dll', 'Lumina*.dll', 'TerraFX*.dll', 'OmenTools.dll')) {
     if (Get-ChildItem "$OutputDirectory/$pattern" -File -ErrorAction SilentlyContinue) { throw "Host assembly must not ship: $pattern" }
 }
+foreach ($runtime in @('msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')) {
+    if (Test-Path "$OutputDirectory/$runtime") { throw "Private VC++ runtime must not ship: $runtime" }
+}
 New-Item -ItemType Directory -Force artifacts | Out-Null
 Compress-Archive -Path "$OutputDirectory/*" -DestinationPath 'artifacts/latest.zip' -Force
 $download = "https://github.com/cycleapple/PocketRecorder/releases/download/api13-v$version/latest.zip"

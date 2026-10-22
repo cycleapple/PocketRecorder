@@ -49,6 +49,7 @@
   "Config.OutputResolution": "Output Resolution",
   "Config.QuarterOutputDesc": "1/4 output preserves aspect ratio, scaling width and height to half.",
   "Config.RecordOverlay": "Record Dalamud UI",
+  "Config.OverlayUnavailable": "Overlay selection is unavailable. Recording captures the frame before Present; overlay visibility depends on the rendering hook order.",
   "Config.OverlayDesc": "Includes Dalamud/ImGui overlays; takes effect on next recording.",
   "Config.EncodingAuto": "Auto",
   "Config.EncodingCompatible": "CPU + FFmpeg",

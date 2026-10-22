@@ -49,6 +49,7 @@
   "Config.OutputResolution": "输出分辨率",
   "Config.QuarterOutputDesc": "1/4 输出会保持画面比例，宽高各缩到 1/2。",
   "Config.RecordOverlay": "录制卫月界面",
+  "Config.OverlayUnavailable": "目前无法切换是否录制卫月界面。录制在画面呈现前捕获，是否包含叠加界面取决于绘制挂钩顺序。",
   "Config.OverlayDesc": "开启后会包含 Dalamud/ImGui 叠加层，下次录制生效。",
   "Config.EncodingAuto": "自动",
   "Config.EncodingCompatible": "CPU + FFmpeg",

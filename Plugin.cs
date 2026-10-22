@@ -75,7 +75,6 @@ public sealed class Plugin : IDalamudPlugin
 
         StartBackgroundWarmup();
         GameGraphicsDeviceProbeCache.StartWarmup();
-        RecordingService.StartPresentHookWarmup();
         PocketBackendClient.QueueHeartbeat("startup", new
         {
             targetFps = Config.TargetFps,
@@ -407,18 +406,12 @@ public sealed class Plugin : IDalamudPlugin
 
         Print(Loc.T("Cmd.StatusLine", RecordingService.Phase.ToDisplayText(), elapsed));
         Print(Loc.T("Cmd.AutoRecordLine", Loc.OnOff(Config.AutoRecordEightPlayerDuty), AutoDutyRecordingService.StatusText));
-        Print(Loc.T("Cmd.ParamsLine", Config.TargetFps, Config.VideoBitrate / 1_000_000, AudioModeText(Config.AudioCaptureMode, Config.CaptureMicrophone), Loc.OnOff(Config.IncludeOverlay)));
+        Print(Loc.T("Cmd.ParamsLine", Config.TargetFps, Config.VideoBitrate / 1_000_000, AudioModeText(Config.AudioCaptureMode, Config.CaptureMicrophone), Loc.T("Config.OverlayUnavailable")));
     }
 
     private void HandleOverlayCommand(string[] parts)
     {
-        HandleSwitchCommand(
-            parts,
-            Config.IncludeOverlay,
-            Loc.T("Cmd.OverlayStatus", Loc.OnOff(Config.IncludeOverlay)),
-            Loc.T("Cmd.OverlayUsage"),
-            enabled => Config.IncludeOverlay = enabled,
-            enabled => Loc.T(enabled ? "Cmd.OverlayOn" : "Cmd.OverlayOff"));
+        Print(Loc.T("Config.OverlayUnavailable"));
     }
 
     private void HandleSwitchCommand(

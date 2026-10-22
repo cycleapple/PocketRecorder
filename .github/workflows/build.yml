@@ -16,6 +16,7 @@ jobs:
           dotnet-version: 9.0.x
       - uses: microsoft/setup-msbuild@v2
       - run: python scripts/Verify-Locales.py
+      - run: dotnet run --project tests/CaptureRetirement.Tests -c Release
       - run: dotnet build PocketRecorder.csproj -c Release -p:Platform=x64
       - shell: pwsh
         run: ./scripts/Package-Api13.ps1
