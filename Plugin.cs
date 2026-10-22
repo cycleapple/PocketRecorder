@@ -406,12 +406,18 @@ public sealed class Plugin : IDalamudPlugin
 
         Print(Loc.T("Cmd.StatusLine", RecordingService.Phase.ToDisplayText(), elapsed));
         Print(Loc.T("Cmd.AutoRecordLine", Loc.OnOff(Config.AutoRecordEightPlayerDuty), AutoDutyRecordingService.StatusText));
-        Print(Loc.T("Cmd.ParamsLine", Config.TargetFps, Config.VideoBitrate / 1_000_000, AudioModeText(Config.AudioCaptureMode, Config.CaptureMicrophone), Loc.T("Config.OverlayUnavailable")));
+        Print(Loc.T("Cmd.ParamsLine", Config.TargetFps, Config.VideoBitrate / 1_000_000, AudioModeText(Config.AudioCaptureMode, Config.CaptureMicrophone), Loc.OnOff(Config.IncludeOverlay)));
     }
 
     private void HandleOverlayCommand(string[] parts)
     {
-        Print(Loc.T("Config.OverlayUnavailable"));
+        HandleSwitchCommand(
+            parts,
+            Config.IncludeOverlay,
+            Loc.T("Cmd.OverlayStatus", Loc.OnOff(Config.IncludeOverlay)),
+            Loc.T("Cmd.OverlayUsage"),
+            enabled => Config.IncludeOverlay = enabled,
+            enabled => Loc.T(enabled ? "Cmd.OverlayOn" : "Cmd.OverlayOff"));
     }
 
     private void HandleSwitchCommand(

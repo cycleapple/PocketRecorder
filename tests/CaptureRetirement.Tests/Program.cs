@@ -23,6 +23,7 @@ int idleReleases = 0;
 await idle.Retire(() => true, () => idleReleases++).WaitAsync(TimeSpan.FromSeconds(5));
 Check(idleReleases == 1, "Idle capture was not released.");
 Console.WriteLine("PASS: long-running Present retains resources; retirement is idempotent; idle and completed captures are released.");
+Recorder.SchedulerChecks.Run();
 
 static class EventExtensions
 {
