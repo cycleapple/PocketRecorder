@@ -168,7 +168,7 @@ internal sealed class RecordingService : IDisposable
                 config.VideoCodec,
                 config.EncoderPreset,
                 config.UseHardwareEncoder,
-                config.IncludeOverlay,
+                false, // Overlay selection is unavailable with pre-Present capture.
                 config.VideoOutputScaleMode,
                 config.ForceFFmpegRecording,
                 gameGraphicsDevice);
@@ -277,7 +277,6 @@ internal sealed class RecordingService : IDisposable
             _gameInterop,
             OnVideoFrame,
             ShouldCaptureVideoFrame);
-        videoCapture.IncludeOverlay = request.IncludeOverlay;
         videoCapture.PreferD3D11TextureFrames = backendPlan.PrefersD3D11TextureFrames;
 
         lock (_sync)

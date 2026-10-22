@@ -105,6 +105,7 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
     private bool _loggedBackBufferSuccess;
     private string _captureMethod = "unknown";
     private int _presentDetourDepth;
+    private readonly CaptureRetirement _retirement = new();
 
     private const int MaxConsecutiveEmptyFramesBeforeWarning = 3;
     private const int StagingTextureCount = 3;
@@ -127,7 +128,6 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
     public int CurrentWidth { get; private set; }
     public int CurrentHeight { get; private set; }
     public bool PreferD3D11TextureFrames { get; set; }
-    public bool IncludeOverlay { get; set; }
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate int PresentDelegate(IntPtr swapChain, uint syncInterval, uint flags);
@@ -189,7 +189,7 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
         {
             _capturing = true;
             _captureMethod = "PresentHook";
-            Plugin.Log!.Info($"[Video] Capture started, targetFps={_targetFps}, captureFps={_captureFps}, method=PresentHook, includeOverlay={IncludeOverlay}");
+            Plugin.Log!.Info($"[Video] Capture started, targetFps={_targetFps}, captureFps={_captureFps}, method=PresentHook");
             return true;
         }
 
@@ -204,11 +204,11 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
         if (Interlocked.Exchange(ref _stopStarted, 1) != 0)
             return;
 
+        _disposed = true;
         RequestStop();
         WaitForNv12StopCleanup();
 
         DisablePresentHook();
-        WaitForPresentDetoursToDrain();
         _sw.Stop();
         _nv12PerfStats.FlushIfAny();
         double acquireAvgUs = _nativeSharedAcquireSuccesses > 0
@@ -224,7 +224,15 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
         Plugin.Log!.Info($"[Video] {stopSummary}");
         RecordingDiagnosticLog.WriteIfEnabled("Video", stopSummary);
         AmdRecordingDiagnosticLog.Write("Video", stopSummary);
-        ReleaseCaptureResources();
+        var retirement = _retirement.Retire(
+            () => Volatile.Read(ref _presentDetourDepth) == 0,
+            () =>
+            {
+                DisposePresentHook();
+                ReleaseCaptureResources();
+            });
+        if (!retirement.Wait(250))
+            Plugin.Log!.Warning("[Video] Present is still active; hook and capture resources are retained until it returns.");
     }
 
     public void RequestStop()
@@ -296,7 +304,7 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
             if (_presentHook == null || !_presentHookEnabled)
                 return;
 
-            try { _presentHook.Disable(); } catch { }
+            _presentHook.Disable();
             _presentHookEnabled = false;
             Plugin.Log!.Info("[Video] ✓ Present hook disabled.");
         }
@@ -305,7 +313,6 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
     private void DisposePresentHook()
     {
         DisablePresentHook();
-        WaitForPresentDetoursToDrain();
 
         lock (_hookSync)
         {
@@ -321,17 +328,13 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
     private int OnPresentDetour(IntPtr swapChainPtr, uint syncInterval, uint flags)
     {
         Interlocked.Increment(ref _presentDetourDepth);
-        if (_capturing)
-        {
-            TryCaptureInPresentHook(swapChainPtr, "before");
-        }
-        else if (!_capturing)
-        {
-            TryDrainNv12StopCleanup(swapChainPtr);
-        }
-
         try
         {
+            if (_capturing)
+                TryCaptureInPresentHook(swapChainPtr, "before");
+            else
+                TryDrainNv12StopCleanup(swapChainPtr);
+
             return _presentHook!.Original(swapChainPtr, syncInterval, flags);
         }
         finally
@@ -824,19 +827,6 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
             Plugin.Log.Warning("[Video] ⚠ ALL sample RGB values are black, but alpha is non-zero.");
     }
 
-    private void WaitForPresentDetoursToDrain()
-    {
-        if (Volatile.Read(ref _presentDetourDepth) == 0)
-            return;
-
-        Stopwatch waitSw = Stopwatch.StartNew();
-        while (Volatile.Read(ref _presentDetourDepth) > 0 && waitSw.ElapsedMilliseconds < 250)
-            Thread.Sleep(1);
-
-        if (Volatile.Read(ref _presentDetourDepth) > 0)
-            Plugin.Log!.Warning($"[Video] Present detours did not drain within {waitSw.ElapsedMilliseconds}ms.");
-    }
-
     private void ReleaseCaptureResources()
     {
         ReleaseNativeSharedTextures();
@@ -847,11 +837,6 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
 
     public void Dispose()
     {
-        if (_disposed) return;
-        _disposed = true;
-
         Stop();
-        DisposePresentHook();
-        ReleaseCaptureResources();
     }
 }
