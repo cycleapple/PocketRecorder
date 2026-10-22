@@ -1,4 +1,4 @@
-Pocket Recorder 1.0.5.22 — Dalamud API 13 / .NET 9 / 繁體中文測試版
+Pocket Recorder 1.0.5.23 — Dalamud API 13 / .NET 9 / 繁體中文測試版
 
 修正顯示卡原生錄影在倒數計時或手動開始錄影時可能使遊戲閃退的問題。
 不再隨插件附帶 oneVPL 套件中的舊版 VC++ 執行階段，改用系統目前的相容版本。
@@ -14,8 +14,9 @@ Pocket Recorder 1.0.5.22 — Dalamud API 13 / .NET 9 / 繁體中文測試版
 指令：/pktr 開啟設定、/pktr start 開始、/pktr end 停止、/pktr list 開啟錄影清單。
 既有設定若未顯示繁中，請在語言選單選擇「繁體中文」。
 
-已驗證編譯與翻譯資源完整性，尚未完成遊戲內錄影、音訊、GPU 編碼與自動倒數實測。
+已驗證編譯與翻譯資源完整性；本次 ReShade 與衛月介面錄影切換已完成遊戲內實測。
 沿用上游首次啟動下載 FFmpeg 與預設啟用匿名診斷回報行為；可於「隱私與診斷」關閉回報。
 
-修正 ReShade 相容性：每次錄影建立 Present 掛鉤，停止後等待進行中的呼叫離開才釋放。
-畫面固定於 Present 前擷取，避免 flip-model 黑幀；暫停提供衛月介面錄製切換，介面與指令會說明限制。
+維持 ReShade 相容性：每次錄影建立 Present 掛鉤，停止後等待進行中的呼叫離開才釋放。
+恢復衛月介面錄製切換：關閉時在 ImGui 前擷取；開啟時在 ImGui 繪製後、Present 前擷取。
+若 Dalamud 內部佇列不可用，會安全退回 Present 前擷取，不恢復 flip-model 的不安全路徑。

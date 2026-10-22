@@ -277,6 +277,7 @@ internal sealed class RecordingService : IDisposable
             _gameInterop,
             OnVideoFrame,
             ShouldCaptureVideoFrame);
+        videoCapture.IncludeOverlay = request.IncludeOverlay;
         videoCapture.PreferD3D11TextureFrames = backendPlan.PrefersD3D11TextureFrames;
 
         lock (_sync)

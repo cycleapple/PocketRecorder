@@ -284,7 +284,13 @@ internal sealed class ConfigWindow : Window
         }
         ImGui.TextDisabled(Loc.T("Config.QuarterOutputDesc"));
 
-        ImGui.TextWrapped(Loc.T("Config.OverlayUnavailable"));
+        bool includeOverlay = config.IncludeOverlay;
+        if (ImGui.Checkbox(Loc.T("Config.RecordOverlay"), ref includeOverlay))
+        {
+            config.IncludeOverlay = includeOverlay;
+            SaveConfig(config);
+        }
+        ImGui.TextDisabled(Loc.T("Config.OverlayDesc"));
 
         string[] modes = { Loc.T("Config.EncodingAuto"), Loc.T("Config.EncodingCompatible"), Loc.T("Config.EncodingAdvanced") };
         int modeIdx = config.VideoCodec == "auto"

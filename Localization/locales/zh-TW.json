@@ -49,7 +49,6 @@
   "Config.OutputResolution": "輸出解析度",
   "Config.QuarterOutputDesc": "1/4 輸出會保持畫面比例，寬高各縮到 1/2。",
   "Config.RecordOverlay": "錄製衛月介面",
-  "Config.OverlayUnavailable": "目前無法切換是否錄製衛月介面。錄影在畫面呈現前擷取，是否包含疊加介面取決於繪製掛鉤順序。",
   "Config.OverlayDesc": "開啟後會包含 Dalamud/ImGui 疊加層，下次錄製生效。",
   "Config.EncodingAuto": "自動",
   "Config.EncodingCompatible": "CPU + FFmpeg",
