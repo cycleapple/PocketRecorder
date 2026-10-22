@@ -7,5 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../Capture/CaptureRetirement.cs" Link="CaptureRetirement.cs" />
+    <Compile Include="../../Capture/DalamudPostImGuiScheduler.cs" Link="DalamudPostImGuiScheduler.cs" />
   </ItemGroup>
 </Project>

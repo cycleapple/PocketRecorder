@@ -111,7 +111,6 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
     private int _postImGuiCaptureQueued;
     private int _postImGuiCaptureFailureLogged;
     private int _postImGuiCaptureSuccessLogged;
-    private long _postImGuiSwapChainAddress;
     private readonly CaptureRetirement _retirement = new();
 
     private const int MaxConsecutiveEmptyFramesBeforeWarning = 3;
@@ -189,7 +188,6 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
         _postImGuiCaptureQueued = 0;
         _postImGuiCaptureFailureLogged = 0;
         _postImGuiCaptureSuccessLogged = 0;
-        _postImGuiSwapChainAddress = 0;
         _nonGameSwapChainSkipCount = 0;
         _lastNonGameSwapChainLogTicks = 0;
         _lastGameSwapChainRefreshTicks = 0;
@@ -349,7 +347,7 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
             {
                 bool captureAfterImGui = IncludeOverlay &&
                                          ShouldCaptureSwapChain(swapChainPtr) &&
-                                         TryQueueCaptureAfterImGuiRender(swapChainPtr);
+                                         TryQueueCaptureAfterImGuiRender();
                 if (!captureAfterImGui)
                     TryCaptureInPresentHook(swapChainPtr, IncludeOverlay ? "before (post-ImGui fallback)" : "before");
             }
@@ -364,14 +362,13 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
         }
     }
 
-    private bool TryQueueCaptureAfterImGuiRender(IntPtr swapChainPtr)
+    private bool TryQueueCaptureAfterImGuiRender()
     {
         // A callback that was not drained by the previous Present must not block video
         // progress. The caller will safely capture before Present for this frame instead.
         if (Interlocked.CompareExchange(ref _postImGuiCaptureQueued, 1, 0) != 0)
             return false;
 
-        Interlocked.Exchange(ref _postImGuiSwapChainAddress, swapChainPtr.ToInt64());
         if (_postImGuiScheduler.TryEnqueue(_captureAfterImGuiRenderAction, out string failureReason))
         {
             if (Interlocked.Exchange(ref _postImGuiCaptureSuccessLogged, 1) == 0)
@@ -397,9 +394,10 @@ internal sealed unsafe partial class VideoCaptureService : IDisposable
             if (!_capturing || _disposed || !IncludeOverlay)
                 return;
 
-            long swapChainAddress = Volatile.Read(ref _postImGuiSwapChainAddress);
-            if (swapChainAddress != 0)
-                TryCaptureInPresentHook(new IntPtr(swapChainAddress), "after ImGui render, before");
+            // The queue may run on a later frame after a swapchain replacement.
+            // Resolve the live swapchain on the render thread instead of keeping a raw pointer.
+            if (TryGetGameSwapChain("post-ImGui capture", out IntPtr swapChainPtr))
+                TryCaptureInPresentHook(swapChainPtr, "after ImGui render, before");
         }
         finally
         {
