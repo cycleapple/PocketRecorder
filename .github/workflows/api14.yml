@@ -18,8 +18,8 @@ jobs:
         shell: pwsh
         run: |
           $zip = Join-Path $env:RUNNER_TEMP 'dalamud-api14.zip'
-          Invoke-WebRequest https://raw.githubusercontent.com/goatcorp/dalamud-distrib/261f5b0cd1f5746533d3d13cf01d9aa62853a746/latest.zip -OutFile $zip
-          if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne '81704D31A1690801F87C8FDB3C2C7956AFCF7E7F56DD04FA37F9B1D3813082CA') { throw 'Reference archive hash mismatch' }
+          Invoke-WebRequest https://raw.githubusercontent.com/goatcorp/dalamud-distrib/6fb2b12018922bddeef009edd26082f068f8c602/latest.zip -OutFile $zip
+          if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne '6A9F9AEE19AF4280F2D61680BBFF960AE48E5DCAAD70707BAAD857DA2F9D8E48') { throw 'Reference archive hash mismatch' }
           $refs = Join-Path $env:RUNNER_TEMP 'dalamud-api14'
           Expand-Archive $zip $refs
           "DALAMUD_HOME=$refs" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
