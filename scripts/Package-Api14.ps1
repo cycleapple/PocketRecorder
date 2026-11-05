@@ -33,7 +33,7 @@ foreach ($runtime in @('msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')
 }
 New-Item -ItemType Directory -Force artifacts | Out-Null
 Compress-Archive -Path "$OutputDirectory/*" -DestinationPath 'artifacts/latest.zip' -Force
-$download = "https://github.com/cycleapple/PocketRecorder/releases/download/api14-v$version/latest.zip"
+$download = "https://github.com/cycleapple/DalamudPlugins-TW-API14/releases/download/plugins-api14/PocketRecorder-$version.zip"
 foreach ($property in @('DownloadLinkInstall', 'DownloadLinkUpdate', 'DownloadLinkTesting')) {
     $manifest | Add-Member -NotePropertyName $property -NotePropertyValue $download -Force
 }
